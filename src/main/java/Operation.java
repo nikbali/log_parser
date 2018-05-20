@@ -6,6 +6,7 @@ public class Operation {
     private OutputCommand out;
     private long delay;
     private Date time_sec;
+
     private int type_num_out;
 
     public Operation(OutputCommand out, InputCommand in)

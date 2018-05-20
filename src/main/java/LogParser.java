@@ -1,7 +1,4 @@
 import java.io.*;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,39 +8,42 @@ public class LogParser {
 
 
     public static void main(String[] args) {
-        HashMap<String, InputCommand> hashMap = new HashMap<String, InputCommand>();
-        HashSet hashSet = new HashSet();
-        ArrayList<Command> ar = new ArrayList<Command>();
+
         File file_in = new File("D:\\medium.log");
+        OpeartionCreater oper_creater = OpeartionCreater.getInstance();
+        HashMap<Integer, ArrayList<Operation>> cur_pull_operation;
 
-
-        //FactoryOperations fo = new FactoryOperations();
-        try {
+        try
+        {
             BufferedReader reader = new BufferedReader(new FileReader(file_in));
-            StringBuilder builder = new StringBuilder();
+
             String str = "";
+            long second = 0;
+            long curSecond;
+            //нужно организовать посекундный пулл операций
+
             while ((str = reader.readLine()) != null)
             {
                 if(validation(str) == true)
                 {
                     Command comm = FactoryCommand.create(str);
-                    Operation op = null;
-                   if(hashMap.containsKey(comm.getId()))
-                   {
+                    curSecond = comm.getTime().getTime();
+                    if(curSecond > second)
+                    {
+                        cur_pull_operation = oper_creater.getPull();
 
-                       op = new Operation(hashMap.get(comm.getId()), (OutputCommand) comm);
-                       System.out.println("Id: " + op.getId() + " Задержка: " + op.getDelay());
-                       hashMap.remove(comm.getId());
-                   }
-                   else
-                   {
-                       if(comm.getClass().getName().equals("InputCommand")) hashMap.put(comm.getId(), (InputCommand) comm);
-                   }
-
-                }
+                        for (Map.Entry<Integer, ArrayList<Operation>> pair : cur_pull_operation.entrySet())
+                        {
+                            System.out.println(new Statistic(pair.getValue()));
+                        }
+                        oper_creater.clearPull();
+                        System.out.println("----------------");
+                        second = curSecond;
+                    }
+                    oper_creater.addToPull(comm);
                 }
             }
-
+        }
         catch (Exception exception)
         {
             exception.printStackTrace();
