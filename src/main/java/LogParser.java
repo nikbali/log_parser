@@ -19,7 +19,7 @@ public class LogParser {
 
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(file_in));
-                BufferedWriter writerToFile = new BufferedWriter(new FileWriter("output.log"));
+                BufferedWriter writerToFile = new BufferedWriter(new FileWriter("output.csv"));
                 String str = "";
                 long second = 0;
                 long curSecond;
