@@ -6,21 +6,26 @@ public class Operation {
     private OutputCommand out;
     private long delay;
     private Date time_sec;
+
     private int type_num_out;
 
+    public Operation(OutputCommand out, InputCommand in)
+    {
+        this(in, out);
+    }
     public Operation(InputCommand in, OutputCommand out)
     {
-        if(in.getId().equals(out.getId()) && in.getTime().equals(out.getTime()))
+        if(in.getId().equals(out.getId()))
         {
             this.in = in;
             this.out = out;
             this.id = in.getId();
-            this.delay = out.getTime_mcs() - in.getTime_mcs();
+            this.delay = out.getTotalOutMcs() - in.getTotalInMcs();
             this.time_sec = in.getTime();
             this.type_num_out = out.getNumType();
 
         }
-        else throw new IllegalArgumentException("Коммандыне относятся к одной операции(Id разные)");
+        else throw new IllegalArgumentException("Комманды не относятся к одной операции(Id разные)");
     }
 
     public String getId() {

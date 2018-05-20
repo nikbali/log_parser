@@ -5,23 +5,28 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class Command {
+/**
+ * Абстрактный класс чтобы не создавать объекты Command,
+ * а создавать уже конкретно InputCommand и OutputCommand
+ */
+public  abstract class Command {
     protected long time_mcs;  //кол-во микросекунд
     protected Date time;  //текущее время с точность до секунды
     protected String id;
     protected int numType;
 
     /**
-     *Метод из входной строки лога извлекает время в млс, которое указано первым аргументом
+     *Метод из входной строки лога извлекает микросекунды, которое указано первым аргументом
+     * Пример: 22:59:15.999994 из данной строки вернет 999994
      * @author Nikita Balily
      * @param str Входная строка лога
-     * @return кол-во милисекунд
+     * @return кол-во микросекунд
      * */
     protected long parseMcs(String str) throws ParseException
     {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSSSSS;");
         Date moment = dateFormat.parse(str.split(",")[0]);
-        return moment.getTime();
+        return moment.getTime() - this.getTime().getTime();
     }
 
     /**
@@ -62,6 +67,12 @@ public abstract class Command {
         }
     }
 
+    /**
+     * Метод извлекает из входной строки номер типа операции
+     * @author Nikita Balily
+     * @param str Входная строка лога
+     * @return Number Type опрации Пример: 101, 10, 130
+     */
     protected int regexParseNumType(String str)
     {
         int type = 0;
@@ -81,6 +92,11 @@ public abstract class Command {
         }
     }
 
+
+    /**
+     *
+     * Getters for all fields
+     */
     public Date getTime() {
         return time;
     }

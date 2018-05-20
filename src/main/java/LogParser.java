@@ -1,7 +1,4 @@
 import java.io.*;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,47 +8,52 @@ public class LogParser {
 
 
     public static void main(String[] args) {
-        HashMap<String, Integer> cnt_command = new HashMap<String, Integer>();
-        ArrayList<Command> ar = new ArrayList<Command>();
-        File file_in = new File("D:\\medium.log");
-        //FactoryOperations fo = new FactoryOperations();
+        System.out.println("Enter full path to LOG - file:");
+        BufferedReader read_console = new BufferedReader(new InputStreamReader(System.in));
+
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file_in));
-            String str = "";
-            while ((str = reader.readLine()) != null)
-            {
-                Command comm = FactoryCommand.create(str);
-                ar.add(comm);
-                if(ar.size()>1)
-                {
-                    try
-                    {
-                        Operation op = new Operation((InputCommand) ar.get(0), (OutputCommand) ar.get(1));
-                        ar.remove(1);
-                        ar.remove(0);
-                        System.out.println("Id" + op.getId() + " Задержка: " + op.getDelay());
+            File file_in = new File(read_console.readLine());
+            read_console.close();
+            OpeartionCreater oper_creater = OpeartionCreater.getInstance();
+            HashMap<Integer, ArrayList<Operation>> cur_pull_operation;
 
-                    }
-                    catch (IllegalArgumentException ex)
-                    {
-                        System.out.println(ex.getMessage());
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(file_in));
+                BufferedWriter writerToFile = new BufferedWriter(new FileWriter("output.csv"));
+                String str = "";
+                long second = 0;
+                long curSecond;
+                writerToFile.write("Time,Type,Count,Average,Median,Percentile90,Percentile99,Maximum \r\n");
+                writerToFile.flush();
+                while ((str = reader.readLine()) != null) {
+                    if (validation(str) == true) {
+                        Command comm = FactoryCommand.create(str);
+                        curSecond = comm.getTime().getTime();
+                        if (curSecond > second) {
+                            cur_pull_operation = oper_creater.getPull();
+
+                            for (Map.Entry<Integer, ArrayList<Operation>> pair : cur_pull_operation.entrySet()) {
+                                writerToFile.write(new Statistic(pair.getValue()).toString());
+                                writerToFile.flush();
+                            }
+                            oper_creater.clearPull();
+                            second = curSecond;
+                        }
+                        oper_creater.addToPull(comm);
                     }
                 }
+                reader.close();
+                writerToFile.close();
 
-                /*
-                if(cnt_command.containsKey(comm.getId()))
-                {
-                    int cnt =  cnt_command.get(comm.getId());
-                    cnt_command.put(comm.getId(),cnt++);
-                }
-                else  cnt_command.put(comm.getId(),1);
-                */
-
+            } catch (IOException exception) {
+                System.out.println("File not found!!!");
             }
-        }
-        catch (IOException exception)
+            catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }catch (IOException ex)
         {
-            System.out.println(exception.getMessage());
+            System.out.println("Input error in console!!!!");
         }
 
     }
@@ -59,14 +61,29 @@ public class LogParser {
     /**
      * Метод проверяет встречается ли в строке слова P2_COD, SQLProxy
      * @param str Входная строка
-     * @return true или false
+     * @return true - слова не встречаются или false - встречаются
      */
     public static boolean validation(String str)
     {
-        
+         try {
+             Pattern patternId = Pattern.compile("P2_COD|SQLProxy");
+             Matcher match = patternId.matcher(str);
+             match.find();
+             if (match.group() != "") return false;
+             else return true;
+         }
+         catch (Exception ex)
+         {
+             return true;
+         }
+
     }
 
 
+
+
 }
+
+
 
 
