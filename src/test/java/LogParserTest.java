@@ -18,4 +18,24 @@ public class LogParserTest {
         assertEquals(true, LogParser.validation(str2));
     }
 
+    @Test
+    public void testTimeParse() throws Exception {
+
+        String in_str = "22:59:15.999994;P2Proxy;;Seq 103466759, id 0xc8cb19ad26c9e1c8, input process 5 mcs, post 6 mcs, arrival time 11966309533593 mcs, type 3, msg_rev 0, messageType 2, msg_size 276, P2Login P2Robot, P2ReplyId -3978057614380899896, outType 3, MQAddress P2Robot.ROBOT_C_Sender3, p2proxyTime 38563263317380, p2channel 31770575371210461, BrokerCode FT03, BuySell 3, Nosystem 2, Code %%%, KodVcb %, ext_id 834599, fix_client_operation_id , Isin , LocalStamp 1900/01/01 00:00:00.000;TID 2500";
+        String out_str = "22:59:16.000173;P2Proxy;;Seq 103466760, reply for id 0xc8cb19ad26c9e1c8, output process 7 mcs, post 11 mcs, reply time 11966309533773 mcs, type 103, P2ReplyCode 0, p2channel 70df2b834f8edd, messageType 0xbad18, num_orders 0;TID 11916";
+        InputCommand in = new InputCommand(in_str);
+        OutputCommand out = new OutputCommand(out_str);
+        long mcs_in = in.getTime_mcs()- in.getTime().getTime();
+        long mcs_out = out.getTime_mcs()- out.getTime().getTime();
+
+        long total_in_mcs = in.getTime().getTime()*1000 + mcs_in;
+        long total_out_mcs = out.getTime().getTime()*1000 + mcs_out;
+
+        System.out.println("InTime(mcs): " + total_in_mcs);
+        System.out.println("OutTime(mcs): " + total_out_mcs);
+        System.out.println("----------------------");
+        System.out.println("Deloy(mcs): " + (total_out_mcs - total_in_mcs));
+
+    }
+
 }
