@@ -5,7 +5,11 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class Command {
+/**
+ * Абстрактный класс чтобы не создавать объекты Command,
+ * а создавать уже конкретно InputCommand и OutputCommand
+ */
+public  abstract class Command {
     protected long time_mcs;  //кол-во микросекунд
     protected Date time;  //текущее время с точность до секунды
     protected String id;
@@ -62,6 +66,12 @@ public abstract class Command {
         }
     }
 
+    /**
+     * Метод извлекает из входной строки номер типа операции
+     * @author Nikita Balily
+     * @param str Входная строка лога
+     * @return Number Type опрации Пример: 101, 10, 130
+     */
     protected int regexParseNumType(String str)
     {
         int type = 0;
@@ -81,6 +91,11 @@ public abstract class Command {
         }
     }
 
+
+    /**
+     *
+     * Getters for all fields
+     */
     public Date getTime() {
         return time;
     }

@@ -8,9 +8,13 @@ public class Operation {
     private Date time_sec;
     private int type_num_out;
 
+    public Operation(OutputCommand out, InputCommand in)
+    {
+        this(in, out);
+    }
     public Operation(InputCommand in, OutputCommand out)
     {
-        if(in.getId().equals(out.getId()) && in.getTime().equals(out.getTime()))
+        if(in.getId().equals(out.getId()))
         {
             this.in = in;
             this.out = out;
@@ -20,7 +24,7 @@ public class Operation {
             this.type_num_out = out.getNumType();
 
         }
-        else throw new IllegalArgumentException("Коммандыне относятся к одной операции(Id разные)");
+        else throw new IllegalArgumentException("Комманды не относятся к одной операции(Id разные)");
     }
 
     public String getId() {

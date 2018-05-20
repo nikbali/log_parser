@@ -28,6 +28,14 @@ import java.util.regex.Pattern;
                 return null;
             }
         }
+
+        /**
+         * Метод в строке ищет либо input, либо output ,
+         * исользуется в дальнейшем для фабричного создания объектов
+         * @author Nikita Balily
+         * @param str
+         * @return слово input или output
+         */
         private static String regexParseIOType(String str)
         {
             String io_type = "";

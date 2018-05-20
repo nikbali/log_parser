@@ -11,47 +11,42 @@ public class LogParser {
 
 
     public static void main(String[] args) {
-        HashMap<String, Integer> cnt_command = new HashMap<String, Integer>();
+        HashMap<String, InputCommand> hashMap = new HashMap<String, InputCommand>();
+        HashSet hashSet = new HashSet();
         ArrayList<Command> ar = new ArrayList<Command>();
         File file_in = new File("D:\\medium.log");
+
+
         //FactoryOperations fo = new FactoryOperations();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file_in));
+            StringBuilder builder = new StringBuilder();
             String str = "";
             while ((str = reader.readLine()) != null)
             {
-                Command comm = FactoryCommand.create(str);
-                ar.add(comm);
-                if(ar.size()>1)
+                if(validation(str) == true)
                 {
-                    try
-                    {
-                        Operation op = new Operation((InputCommand) ar.get(0), (OutputCommand) ar.get(1));
-                        ar.remove(1);
-                        ar.remove(0);
-                        System.out.println("Id" + op.getId() + " Задержка: " + op.getDelay());
+                    Command comm = FactoryCommand.create(str);
+                    Operation op = null;
+                   if(hashMap.containsKey(comm.getId()))
+                   {
 
-                    }
-                    catch (IllegalArgumentException ex)
-                    {
-                        System.out.println(ex.getMessage());
-                    }
+                       op = new Operation(hashMap.get(comm.getId()), (OutputCommand) comm);
+                       System.out.println("Id: " + op.getId() + " Задержка: " + op.getDelay());
+                       hashMap.remove(comm.getId());
+                   }
+                   else
+                   {
+                       if(comm.getClass().getName().equals("InputCommand")) hashMap.put(comm.getId(), (InputCommand) comm);
+                   }
+
                 }
-
-                /*
-                if(cnt_command.containsKey(comm.getId()))
-                {
-                    int cnt =  cnt_command.get(comm.getId());
-                    cnt_command.put(comm.getId(),cnt++);
                 }
-                else  cnt_command.put(comm.getId(),1);
-                */
-
             }
-        }
-        catch (IOException exception)
+
+        catch (Exception exception)
         {
-            System.out.println(exception.getMessage());
+            exception.printStackTrace();
         }
 
     }
@@ -59,14 +54,29 @@ public class LogParser {
     /**
      * Метод проверяет встречается ли в строке слова P2_COD, SQLProxy
      * @param str Входная строка
-     * @return true или false
+     * @return true - слова не встречаются или false - встречаются
      */
     public static boolean validation(String str)
     {
-        
+         try {
+             Pattern patternId = Pattern.compile("P2_COD|SQLProxy");
+             Matcher match = patternId.matcher(str);
+             match.find();
+             if (match.group() != "") return false;
+             else return true;
+         }
+         catch (Exception ex)
+         {
+             return true;
+         }
+
     }
 
 
+
+
 }
+
+
 
 
