@@ -88,7 +88,7 @@ public class Statistic {
                 "," + median +
                 "," + percentile90 +
                 "," + percentile99 +
-                "," + maximum
+                "," + maximum+"\r\n"
                 ;
     }
 }

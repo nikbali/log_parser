@@ -8,45 +8,52 @@ public class LogParser {
 
 
     public static void main(String[] args) {
+        System.out.println("Enter full path to LOG - file:");
+        BufferedReader read_console = new BufferedReader(new InputStreamReader(System.in));
 
-        File file_in = new File("D:\\medium.log");
-        OpeartionCreater oper_creater = OpeartionCreater.getInstance();
-        HashMap<Integer, ArrayList<Operation>> cur_pull_operation;
+        try {
+            File file_in = new File(read_console.readLine());
+            read_console.close();
+            OpeartionCreater oper_creater = OpeartionCreater.getInstance();
+            HashMap<Integer, ArrayList<Operation>> cur_pull_operation;
 
-        try
-        {
-            BufferedReader reader = new BufferedReader(new FileReader(file_in));
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(file_in));
+                BufferedWriter writerToFile = new BufferedWriter(new FileWriter("output.log"));
+                String str = "";
+                long second = 0;
+                long curSecond;
+                writerToFile.write("Time,Type,Count,Average,Median,Percentile90,Percentile99,Maximum \r\n");
+                writerToFile.flush();
+                while ((str = reader.readLine()) != null) {
+                    if (validation(str) == true) {
+                        Command comm = FactoryCommand.create(str);
+                        curSecond = comm.getTime().getTime();
+                        if (curSecond > second) {
+                            cur_pull_operation = oper_creater.getPull();
 
-            String str = "";
-            long second = 0;
-            long curSecond;
-            //нужно организовать посекундный пулл операций
-
-            while ((str = reader.readLine()) != null)
-            {
-                if(validation(str) == true)
-                {
-                    Command comm = FactoryCommand.create(str);
-                    curSecond = comm.getTime().getTime();
-                    if(curSecond > second)
-                    {
-                        cur_pull_operation = oper_creater.getPull();
-
-                        for (Map.Entry<Integer, ArrayList<Operation>> pair : cur_pull_operation.entrySet())
-                        {
-                            System.out.println(new Statistic(pair.getValue()));
+                            for (Map.Entry<Integer, ArrayList<Operation>> pair : cur_pull_operation.entrySet()) {
+                                writerToFile.write(new Statistic(pair.getValue()).toString());
+                                writerToFile.flush();
+                            }
+                            oper_creater.clearPull();
+                            second = curSecond;
                         }
-                        oper_creater.clearPull();
-                        System.out.println("----------------");
-                        second = curSecond;
+                        oper_creater.addToPull(comm);
                     }
-                    oper_creater.addToPull(comm);
                 }
+                reader.close();
+                writerToFile.close();
+
+            } catch (IOException exception) {
+                System.out.println("File not found!!!");
             }
-        }
-        catch (Exception exception)
+            catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }catch (IOException ex)
         {
-            exception.printStackTrace();
+            System.out.println("Input error in console!!!!");
         }
 
     }
