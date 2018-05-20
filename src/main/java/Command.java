@@ -16,16 +16,17 @@ public  abstract class Command {
     protected int numType;
 
     /**
-     *Метод из входной строки лога извлекает время в млс, которое указано первым аргументом
+     *Метод из входной строки лога извлекает микросекунды, которое указано первым аргументом
+     * Пример: 22:59:15.999994 из данной строки вернет 999994
      * @author Nikita Balily
      * @param str Входная строка лога
-     * @return кол-во милисекунд
+     * @return кол-во микросекунд
      * */
     protected long parseMcs(String str) throws ParseException
     {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSSSSS;");
         Date moment = dateFormat.parse(str.split(",")[0]);
-        return moment.getTime();
+        return moment.getTime() - this.getTime().getTime();
     }
 
     /**

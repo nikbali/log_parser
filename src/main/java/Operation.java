@@ -19,7 +19,7 @@ public class Operation {
             this.in = in;
             this.out = out;
             this.id = in.getId();
-            this.delay = out.getTime_mcs() - in.getTime_mcs();
+            this.delay = out.getTotalOutMcs() - in.getTotalInMcs();
             this.time_sec = in.getTime();
             this.type_num_out = out.getNumType();
 
