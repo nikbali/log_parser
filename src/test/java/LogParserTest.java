@@ -16,6 +16,8 @@ public class LogParserTest {
         //True
         String str2 = "22:59:40.202358;P2Proxy;;Seq 103472007, reply for id 0xc8d547425190e1c8, output process 9 mcs, post 13 mcs, reply time 11966333736307 mcs, type 101, P2ReplyCode 332, p2channel 70df2b834f8edd, messageType 0xbad00, order_id 0;TID 1080";
         assertEquals(true, LogParser.validation(str2));
+
+
     }
 
     @Test
@@ -37,5 +39,7 @@ public class LogParserTest {
         System.out.println("Deloy(mcs): " + (total_out_mcs - total_in_mcs));
 
     }
+
+
 
 }

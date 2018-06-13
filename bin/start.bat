@@ -1,0 +1,1 @@
+java -jar log_parser-1.0.jar
